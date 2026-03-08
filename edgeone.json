@@ -1,0 +1,30 @@
+{
+  "env": ["production"],
+  "routes": [
+    {
+      "path": "/api/proxy/*",
+      "action": {
+        "name": "edge_function",
+        "param": {
+          "function": "api/proxy"
+        }
+      }
+    },
+    {
+      "path": "/*",
+      "action": {
+        "name": "static_serve",
+        "param": {
+          "path": "/"
+        }
+      }
+    }
+  ],
+  "functions": [
+    {
+      "name": "api/proxy",
+      "path": "api/proxy/index.js",
+      "runtime": "nodejs18"
+    }
+  ]
+}
