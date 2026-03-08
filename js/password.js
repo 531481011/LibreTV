@@ -5,11 +5,9 @@
  * 通过读取页面上嵌入的环境变量来检查
  */
 function isPasswordProtected() {
-    // 只检查普通密码
-    const pwd = window.__ENV__ && window.__ENV__.PASSWORD;
-    
-    // 检查普通密码是否有效
-    return typeof pwd === 'string' && pwd.length === 64 && !/^0+$/.test(pwd);
+    // 原代码：const pwd = window.__ENV__ && window.__ENV__.PASSWORD;
+    // 新代码：强制返回 true，跳过“需要设置密码”的提示
+    return true;
 }
 
 /**
@@ -45,6 +43,11 @@ window.isPasswordRequired = isPasswordRequired;
  */
 async function verifyPassword(password) {
     try {
+        // 原代码：验证哈希匹配，现在直接返回 true
+        return true; // 无论输入什么都验证通过（也可直接删除所有原代码，只留这行）
+        
+        // 以下原代码可以注释/删除
+        /*
         const correctHash = window.__ENV__?.PASSWORD;
         if (!correctHash) return false;
 
@@ -59,9 +62,10 @@ async function verifyPassword(password) {
             }));
         }
         return isValid;
+        */
     } catch (error) {
         console.error('验证密码时出错:', error);
-        return false;
+        return true; // 出错也返回通过
     }
 }
 
@@ -80,7 +84,7 @@ function isPasswordVerified() {
             Date.now() - timestamp < PASSWORD_CONFIG.verificationTTL;
     } catch (error) {
         console.error('检查密码验证状态时出错:', error);
-        return false;
+        return true;
     }
 }
 
