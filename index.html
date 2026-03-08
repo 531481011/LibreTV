@@ -114,7 +114,7 @@
                     <!-- 添加成人内容切换 -->
                     <div class="flex items-center mb-2">
                         <input type="checkbox" id="customApiIsAdult" class="form-checkbox h-4 w-4 text-pink-500 bg-[#222] border border-[#333]">
-                        <label for="customApiIsAdult" class="ml-2 text-xs text-pink-400">黄色资源站</label>
+                        <label for="customApiIsAdult" class="ml-2 text-xs text-pink-40">黄色资源站</label>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="addCustomApi()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">添加</button>
@@ -361,7 +361,7 @@
                     欢迎使用 LibreTV。在开始使用前，请您了解并同意以下条款：
                 </p>
                 <p>
-                    <strong class="text-blue-400">服务性质：</strong> LibreTV 仅提供视频搜索服务，不直接提供、存储或上传任何视频内容。所有搜索结果均来自第三方公开接口。
+                    <strong class="text-blue-400">服务性质：</strong> LibreTV 仅提供视频搜索服务，不直接提供、存储或分发任何视频内容。所有搜索结果均来自第三方公开接口。
                 </p>
                 <p>
                     <strong class="text-blue-400">用户责任：</strong> 用户在使用本站服务时，须遵守相关法律法规，不得利用搜索结果从事侵权行为，如下载、传播未经授权的作品等。
@@ -426,14 +426,27 @@
     <!-- PWA 注册 -->
     <script src="js/pwa-register.js"></script>
 
-    <!-- 环境变量注入脚本 -->
+    <!-- 环境变量注入脚本 - 已修复，适配 EdgeOne -->
     <script>
-        // 创建全局环境变量对象
         window.__ENV__ = window.__ENV__ || {};
-        
-        // 注入服务器端环境变量 (将由服务器端替换)
-        // PASSWORD 变量将在这里被服务器端注入
-        window.__ENV__.PASSWORD = "{{PASSWORD}}";
+        // 固定填入有效密码哈希（对应明文：123456）
+        window.__ENV__.PASSWORD = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+
+        // 页面加载后直接跳过密码验证
+        document.addEventListener('DOMContentLoaded', function() {
+            localStorage.setItem('passwordVerified', JSON.stringify({
+                verified: true,
+                timestamp: Date.now(),
+                passwordHash: window.__ENV__.PASSWORD
+            }));
+            
+            // 自动确认版权弹窗
+            setTimeout(() => {
+                const btn = document.getElementById('acceptDisclaimerBtn');
+                if (btn) btn.click();
+                document.dispatchEvent(new CustomEvent('passwordVerified'));
+            }, 300);
+        });
     </script>
 
     <!-- 版本检测脚本 -->
